@@ -1,6 +1,6 @@
 # Exchange Rate
 
-### [Назад в Содержание ⤶](https://github.com/adrianhel/adrianhel.md)
+### [На главную ⤶](https://github.com/adrianhel/adrianhel.md)
 
 ___
 
@@ -13,13 +13,13 @@ ___
 
 ## Содержание
 ### Работа с Центральным банком
-1. [Script](data/from_api_to_ch_cbrf_script.py)
+1. [Script](data/scripts/from_api_to_ch_cbrf_script.py)
 для извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**.  
-2. [DAG](data/from_api_to_ch_cbrf_dag.py)
+2. [DAG](data/dags/from_api_to_ch_cbrf_dag.py)
 для извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**.  
 
 ### Работа с сервисом Exchange Rate
-1. [Script](data/from_api_to_ch_exgr_script.py)
+1. [Script](data/scripts/from_api_to_ch_exgr_script.py)
 для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  
-2. [DAG](data/from_api_to_ch_exgr_dag.py)
-для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  
+2. [DAG](data/dags/from_api_to_ch_exgr_dag.py)
+для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  .  

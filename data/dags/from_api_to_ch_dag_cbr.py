@@ -62,7 +62,8 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
     # Создание таблицы, ЕСЛИ НЕ СУЩЕСТВУЕТ ТО СОЗДАТЬ ТАБЛИЦУ
     client.execute(
-        f'CREATE TABLE IF NOT EXISTS {table_name} (num_code Int64, char_code String, nominal Int64, name String, value String, date String) ENGINE Log')
+        f'CREATE TABLE IF NOT EXISTS {table_name} (num_code Int64, char_code String, nominal Int64, name String, '
+        f'value String, date String) ENGINE Log')
 
     # Запись data frame в ClickHouse
     client.execute(f'INSERT INTO {table_name} VALUES', data_frame.to_dict('records'))

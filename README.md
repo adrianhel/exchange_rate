@@ -11,7 +11,7 @@ ___
 
 ## Используемые API
 - [cbr API](https://www.cbr.ru/development/SXML/) – документация по работе с API Центрального банка РФ.
-- [exchangerate API](https://exchangerate.host/documentation) – документация по работе с API exchangerate.
+- [exchangerate API](https://exchangerate.host/documentation) – документация по работе с API Exchange Rate.
 
 ## Содержание
 ### Работа с Центральным банком

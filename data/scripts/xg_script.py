@@ -16,6 +16,14 @@ NAME = 'andy_xg'
 TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
 URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'
 
+# Настройка подключения к базе данных ClickHouse
+CH_CLIENT = Client(
+    host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
+    user=os.getenv('USER'),           # Имя пользователя для подключения
+    password=os.getenv('PASSWORD'),   # Пароль для подключения
+    database=os.getenv('DATABASE')    # База данных, к которой подключаемся
+)
+
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):
     response = req.get(url)
@@ -40,14 +48,6 @@ def extract_data(url, csv_file):
         for key, value in quotes.items():
             writer.writerow([start_date, source, key[3:], value])
 
-
-# Настройка подключения к базе данных ClickHouse
-CH_CLIENT = Client(
-    host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
-    user=os.getenv('USER'),           # Имя пользователя для подключения
-    password=os.getenv('PASSWORD'),   # Пароль для подключения
-    database=os.getenv('DATABASE')    # База данных, к которой подключаемся
-)
 
 # Функция для загрузки данных в ClickHouse из CSV
 def upload_to_clickhouse(csv_file, table_name, client):

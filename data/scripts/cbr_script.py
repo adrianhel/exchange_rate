@@ -12,7 +12,10 @@ load_dotenv()                             # подключение .env
 
 # Устанавливаем URL для API Центрального банка и дату для извлечения данных
 URL = 'http://www.cbr.ru/scripts/XML_daily.asp'  # URL для получения курсов валют с сайта ЦБ
-DATE = '01/01/2025'  # Дата для получения данных по валютам
+DATE = '01/01/2023'
+DATE_FORMAT = str(datetime.strptime(DATE, '%d/%m/%Y').strftime('%Y_%m_%d'))
+NAME = 'andy_cbr'
+TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
 
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
@@ -90,6 +93,6 @@ transform_data('currency', 'currency.csv', DATE)  # Преобразование
 # Пример загрузки данных в ClickHouse
 upload_to_clickhouse(
     csv_file='currency.csv',
-    table_name='currency_data',
+    table_name=TABLE_NAME,
     client=CH_CLIENT
 )

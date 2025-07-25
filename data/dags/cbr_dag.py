@@ -13,11 +13,10 @@ from airflow.operators.python import PythonOperator  # с помощью кот�
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
 
 
-load_dotenv()                             # подключение .env
+load_dotenv()                         # подключение .env
 
-DATE = '2023-01-01'
-DATE_FORMAT = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
-DATE_OP = datetime.strptime(DATE, '%Y-%m-%d').strftime('%d/%m/%Y')
+DATE = '01/01/2023'
+DATE_FORMAT = str(datetime.strptime(DATE, '%d/%m/%Y').strftime('%Y_%m_%d'))
 NAME = 'andy_cbr_dag'
 TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
 
@@ -81,7 +80,7 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
-    NAME,
+    dag_id=NAME,
     schedule_interval='@daily',        # Как часто запускать, счит. CRON запись
     start_date=days_ago(1),            # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
     tags=["andy", "cbr"]  # Тэги на свое усмотрение
@@ -93,7 +92,7 @@ task_extract = PythonOperator(
     python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
-    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', DATE_OP, './extracted_data.xml'],
+    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', DATE, './extracted_data.xml'],
     dag=dag,  # DAG к которому приклеплена задача
 )
 
@@ -105,7 +104,7 @@ task_transform = PythonOperator(
     op_kwargs={
         's_file': './extracted_data.xml',
         'csv_file': './transformed_data.csv',
-        'date': DATE_OP},
+        'date': DATE},
     dag=dag,
 )
 

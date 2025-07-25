@@ -10,7 +10,7 @@ from datetime import datetime            # для работы с датой
 load_dotenv()                             # подключение .env
 
 TOKEN = os.getenv('TOKEN')
-DATE = '2023-04-12'
+DATE = '2023-01-01'
 DATE_FORMAT = new_date_str = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
 NAME = 'andy_xg'
 TABLE_NAME = f'{NAME}_{DATE_FORMAT}'

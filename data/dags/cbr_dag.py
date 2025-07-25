@@ -15,6 +15,12 @@ from airflow.utils.dates import days_ago             # модуль, связа�
 
 load_dotenv()                             # подключение .env
 
+DATE = '2023-01-01'
+DATE_FORMAT = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
+DATE_OP = datetime.strptime(DATE, '%Y-%m-%d').strftime('%d/%m/%Y')
+NAME = 'andy_cbr_dag'
+TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
+
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
     host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
@@ -75,10 +81,10 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
-    'andy_etl_CBR',
+    NAME,
     schedule_interval='@daily',        # Как часто запускать, счит. CRON запись
     start_date=days_ago(1),            # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
-    tags=["358268445", "andy", "CBR"]  # Тэги на свое усмотрение
+    tags=["andy", "cbr"]  # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных
@@ -87,7 +93,7 @@ task_extract = PythonOperator(
     python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
-    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', '23/07/2025', './extracted_data.xml'],
+    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', DATE_OP, './extracted_data.xml'],
     dag=dag,  # DAG к которому приклеплена задача
 )
 
@@ -99,7 +105,7 @@ task_transform = PythonOperator(
     op_kwargs={
         's_file': './extracted_data.xml',
         'csv_file': './transformed_data.csv',
-        'date': '23/07/2025'},
+        'date': DATE_OP},
     dag=dag,
 )
 
@@ -107,7 +113,7 @@ task_transform = PythonOperator(
 task_upload = PythonOperator(
     task_id='upload_to_clickhouse',
     python_callable=upload_to_clickhouse,
-    op_args=['./transformed_data.csv', 'andy_example_data', CH_CLIENT],
+    op_args=['./transformed_data.csv', TABLE_NAME, CH_CLIENT],
     dag=dag,
 )
 

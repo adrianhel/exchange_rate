@@ -14,7 +14,7 @@ load_dotenv()                             # подключение .env
 
 TOKEN = os.getenv('TOKEN')
 DATE = '2023-01-01'
-DATE_FORMAT = new_date_str = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
+DATE_FORMAT = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
 NAME = 'andy_xg_dag'
 TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
 URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'

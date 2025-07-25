@@ -4,6 +4,11 @@ import pandas as pd                       # для обработки данны
 from datetime import datetime, timedelta  # для работы с датами
 import xml.etree.ElementTree as ET        # для парсинга XML
 from clickhouse_driver import Client      # для подключения к ClickHouse
+from dotenv import load_dotenv            # для подключения .env
+import os                                 # см.выше
+
+
+load_dotenv()                             # подключение .env
 
 # Устанавливаем URL для API Центрального банка и дату для извлечения данных
 URL = 'http://www.cbr.ru/scripts/XML_daily.asp'  # URL для получения курсов валют с сайта ЦБ
@@ -11,10 +16,10 @@ DATE = '01/01/2025'  # Дата для получения данных по ва
 
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
-    host='158.160.116.58',  # IP-адрес сервера ClickHouse
-    user='student',  # Имя пользователя для подключения
-    password='dfqh89fhq8',  # Пароль для подключения
-    database='sandbox'  # База данных, к которой подключаемся
+    host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
+    user=os.getenv('USER'),           # Имя пользователя для подключения
+    password=os.getenv('PASSWORD'),   # Пароль для подключения
+    database=os.getenv('DATABASE')    # База данных, к которой подключаемся
 )
 
 # Функция для извлечения данных с API Центрального банка и сохранения их в локальный файл

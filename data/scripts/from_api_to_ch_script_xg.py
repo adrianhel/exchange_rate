@@ -15,6 +15,7 @@ def extract_data(url, csv_file):
         return
 
     data = response.json()
+    #print(data)                     # Выводим ответ для проверки полей API
     # Запись данных в CSV-файл
     with open(csv_file, "w", newline='', encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file)

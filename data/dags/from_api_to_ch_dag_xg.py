@@ -58,7 +58,7 @@ def upload_to_clickhouse(csv_file, table_name, client):
 # Пример выполнения всех шагов
 extract_data(URL, 'currency.csv')
 try:
-    upload_to_clickhouse('currency.csv', 'andy_currency_data', CH_CLIENT)
+    upload_to_clickhouse('currency.csv', 'andy_cur_data', CH_CLIENT)
 except Exception as e:
     print(f"Ошибка при загрузке данных в ClickHouse: {e}")
 

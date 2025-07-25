@@ -7,9 +7,6 @@ from airflow.operators.python import PythonOperator  # с помощью кот�
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
 
 
-# Наш линк с токеном и датой
-URL = f'https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-07-25&end_date=2025-07-25'
-
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):
     response = req.get(url)
@@ -69,7 +66,8 @@ task_extract = PythonOperator(
     python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
-    op_args=['https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-07-25&end_date=2025-07-25', './extracted_data.csv'],
+    op_args=['https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD'
+             '&start_date=2023-01-01&end_date=2023-01-01', './extracted_data.csv'],
     dag=dag,  # DAG к которому приклеплена задача
 )
 

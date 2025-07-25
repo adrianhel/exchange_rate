@@ -13,9 +13,6 @@ def extract_data(url, csv_file):
     if response.status_code != 200:
         print(f"Ошибка API: {response.status_code}, {response.text}")
         return
-    else:
-        data = response.json()
-        print(data)  # Выводим ответ для проверки
 
     data = response.json()
     # Запись данных в CSV-файл

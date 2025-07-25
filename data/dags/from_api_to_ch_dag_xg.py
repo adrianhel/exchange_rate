@@ -5,8 +5,20 @@ from clickhouse_driver import Client                 # для подключен
 from airflow import DAG                              # объект DAG, ключевой элемент Airflow
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
+import os
+from dotenv import load_dotenv
 
-URL = 'https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-01-01&end_date=2025-01-01'
+# Загружаем переменные окружения из файла .env
+load_dotenv()
+
+# Получаем токен доступа из переменной окружения
+api_token = os.getenv('API_TOKEN')
+
+# Дата выгрузки
+DATE = '2025-01-01'
+
+# Наш линк с токеном и датой
+URL = f'https://api.exchangerate.host/timeframe?access_key={api_token}&source=USD&start_date={DATE}&end_date={DATE}'
 
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):

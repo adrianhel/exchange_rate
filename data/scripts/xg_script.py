@@ -2,14 +2,21 @@ import requests as req                   # для выполнения HTTP-за
 import pandas as pd                      # для обработки данных
 import csv                               # для работы с CSV
 from clickhouse_driver import Client     # для подключения к ClickHouse
-from dotenv import load_dotenv            # для подключения .env
-import os                                 # см.выше
+from dotenv import load_dotenv           # для подключения .env
+import os                                # см.выше
+from datetime import datetime            # для работы с датой
 
 
 load_dotenv()                             # подключение .env
 
-# Наш линк с токеном и датой
-URL = 'https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2023-01-01&end_date=2023-01-01'
+TOKEN = os.getenv('TOKEN')
+DATE = '2023-01-01'
+DATE_FORMAT = new_date_str = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
+NAME = 'andy_xg'
+TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
+
+# Наш URL
+URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'
 
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):

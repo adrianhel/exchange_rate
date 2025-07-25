@@ -21,7 +21,7 @@ ___
 для извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**.  
 
 ### Работа с сервисом Exchange Rate
-- [Script](data/scripts/from_api_to_ch_script_xg.py)
+- [Script](data/scripts/xg_script.py)
 для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  
-- [DAG](data/dags/from_api_to_ch_dag_xg.py)
+- [DAG](data/dags/xg_dag.py)
 для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  .  

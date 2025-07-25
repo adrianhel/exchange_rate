@@ -15,7 +15,7 @@ ___
 
 ## Содержание
 ### Работа с Центральным банком
-- [Script](data/scripts/from_api_to_ch_script_cbr.py)
+- [Script](data/scripts/cbr_script.py)
 для извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**.  
 - [DAG](data/dags/from_api_to_ch_dag_cbr.py)
 для извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**.  

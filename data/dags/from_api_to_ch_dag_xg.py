@@ -8,7 +8,7 @@ from airflow.utils.dates import days_ago             # модуль, связа�
 
 
 # Наш линк с токеном и датой
-URL = f'https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-01-01&end_date=2025-01-01'
+URL = f'https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-07-25&end_date=2025-07-25'
 
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):

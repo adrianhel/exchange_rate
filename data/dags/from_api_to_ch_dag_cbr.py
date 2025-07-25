@@ -71,10 +71,10 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
-    'andy_ETL_CBRF',
-    schedule_interval='@daily',   # Как часто запускать, счит. CRON запись
-    start_date=days_ago(1),       # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
-    tags=["358268445", "andy", "CBRF"]
+    'andy_etl_CBR',
+    schedule_interval='@daily',        # Как часто запускать, счит. CRON запись
+    start_date=days_ago(1),            # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
+    tags=["358268445", "andy", "CBR"]  # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных

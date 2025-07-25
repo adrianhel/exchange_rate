@@ -55,10 +55,32 @@ def upload_to_clickhouse(csv_file, table_name, client):
     # Запись data frame в ClickHouse
     client.execute(f'INSERT INTO {table_name} VALUES', [tuple(x) for x in data_frame.to_numpy()])
 
-# Пример выполнения всех шагов
-extract_data(URL, 'currency.csv')
-try:
-    upload_to_clickhouse('currency.csv', 'andy_cur_data', CH_CLIENT)
-except Exception as e:
-    print(f"Ошибка при загрузке данных в ClickHouse: {e}")
+# Определяем DAG, это контейнер для описания нашего пайплайна
+dag = DAG(
+    'andy_etl_XG',
+    schedule_interval='@daily',      # Как часто запускать, счит. CRON запись
+    start_date=days_ago(1),          # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
+    tags=["358268445", "andy", "XG"] # Тэги на свое усмотрение
+)
 
+# Задача для извлечения данных
+task_extract = PythonOperator(
+    task_id='extract_data',        # Уникальное имя задачи
+    python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
+
+    # Параметры в виде списка которые будут переданы в функцию "extract_data"
+    op_args=['https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD&start_date=2025-07-25&end_date=2025-07-25', './extracted_data.csv'],
+    dag=dag,  # DAG к которому приклеплена задача
+)
+
+
+# Задачи для загрузки данных
+task_upload = PythonOperator(
+    task_id='upload_to_clickhouse',
+    python_callable=upload_to_clickhouse,
+    op_args=['./extracted_data.csv', 'andy_cur_data', CH_CLIENT],
+    dag=dag,
+)
+
+# Связываем задачи в соответствующих дагах. Посмотреть связь можно здесь
+task_extract >> task_upload

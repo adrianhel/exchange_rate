@@ -14,11 +14,8 @@ load_dotenv()
 # Получаем токен доступа из переменной окружения
 api_token = os.getenv('API_TOKEN')
 
-# Дата выгрузки
-DATE = '2025-01-01'
-
 # Наш линк с токеном и датой
-URL = f'https://api.exchangerate.host/timeframe?access_key={api_token}&source=USD&start_date={DATE}&end_date={DATE}'
+URL = f'https://api.exchangerate.host/timeframe?access_key={api_token}&source=USD&start_date=2025-01-01&end_date=2025-01-01'
 
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):

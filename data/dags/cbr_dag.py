@@ -1,9 +1,11 @@
 # Библиотеки для работы с XML, http, data frame и date
 import requests as req
 import pandas as pd
-from datetime import datetime
 import xml.etree.ElementTree as ET
 from clickhouse_driver import Client
+from datetime import datetime
+from dotenv import load_dotenv
+import os
 
 # Библиотеки для работы с Airflow
 from airflow import DAG                              # объект DAG, ключевой элемент Airflow
@@ -11,12 +13,14 @@ from airflow.operators.python import PythonOperator  # с помощью кот�
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
 
 
+load_dotenv()                             # подключение .env
+
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
-    host='158.160.116.58',  # IP-адрес сервера ClickHouse
-    user='student',         # Имя пользователя для подключения
-    password='dfqh89fhq8',  # Пароль для подключения
-    database='sandbox'      # База данных, к которой подключаемся
+    host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
+    user=os.getenv('USER'),           # Имя пользователя для подключения
+    password=os.getenv('PASSWORD'),   # Пароль для подключения
+    database=os.getenv('DATABASE')    # База данных, к которой подключаемся
 )
 
 

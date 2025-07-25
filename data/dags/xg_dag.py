@@ -5,7 +5,19 @@ from clickhouse_driver import Client                 # для подключен
 from airflow import DAG                              # объект DAG, ключевой элемент Airflow
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
+from datetime import datetime
+from dotenv import load_dotenv           # для подключения .env
+import os                                # см.выше
 
+
+load_dotenv()                             # подключение .env
+
+TOKEN = os.getenv('TOKEN')
+DATE = '2023-01-01'
+DATE_FORMAT = new_date_str = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
+NAME = 'andy_xg_dag'
+TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
+URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'
 
 # Функция для извлечения данных с API
 def extract_data(url, csv_file):
@@ -32,10 +44,10 @@ def extract_data(url, csv_file):
 
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
-    host='158.160.116.58',   # IP-адрес сервера ClickHouse
-    user='student',          # Имя пользователя для подключения
-    password='dfqh89fhq8',   # Пароль для подключения
-    database='sandbox'       # База данных, к которой подключаемся
+    host=os.getenv('HOST'),           # IP-адрес сервера ClickHouse
+    user=os.getenv('USER'),           # Имя пользователя для подключения
+    password=os.getenv('PASSWORD'),   # Пароль для подключения
+    database=os.getenv('DATABASE')    # База данных, к которой подключаемся
 )
 
 # Функция для загрузки данных в ClickHouse из CSV
@@ -54,7 +66,7 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
-    dag_id='andy_etl_XG',
+    dag_id=NAME,
     schedule_interval='@daily',      # Как часто запускать, счит. CRON запись
     start_date=days_ago(1),          # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
     tags=["358268445", "andy", "XG"] # Тэги на свое усмотрение
@@ -66,8 +78,7 @@ task_extract = PythonOperator(
     python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
-    op_args=['https://api.exchangerate.host/timeframe?access_key=043dc9dad696914726d3064e9d917294&source=USD'
-             '&start_date=2023-01-01&end_date=2023-01-01', './extracted_data.csv'],
+    op_args=[URL, './extracted_data.csv'],
     dag=dag,  # DAG к которому приклеплена задача
 )
 
@@ -76,7 +87,7 @@ task_extract = PythonOperator(
 task_upload = PythonOperator(
     task_id='upload_to_clickhouse',
     python_callable=upload_to_clickhouse,
-    op_args=['./extracted_data.csv', 'andy_cur_data', CH_CLIENT],
+    op_args=['./extracted_data.csv', TABLE_NAME, CH_CLIENT],
     dag=dag,
 )
 

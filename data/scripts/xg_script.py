@@ -10,12 +10,10 @@ from datetime import datetime            # для работы с датой
 load_dotenv()                             # подключение .env
 
 TOKEN = os.getenv('TOKEN')
-DATE = '2023-01-01'
+DATE = '2023-04-12'
 DATE_FORMAT = new_date_str = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
 NAME = 'andy_xg'
 TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
-
-# Наш URL
 URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'
 
 # Функция для извлечения данных с API
@@ -27,6 +25,7 @@ def extract_data(url, csv_file):
 
     data = response.json()
     #print(data)                     # Выводим ответ для проверки полей API
+
     # Запись данных в CSV-файл
     with open(csv_file, "w", newline='', encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file)
@@ -67,6 +66,6 @@ def upload_to_clickhouse(csv_file, table_name, client):
 # Пример выполнения всех шагов
 extract_data(URL, 'currency.csv')
 try:
-    upload_to_clickhouse('currency.csv', 'andy_currency_data', CH_CLIENT)
+    upload_to_clickhouse('currency.csv', TABLE_NAME, CH_CLIENT)
 except Exception as e:
     print(f"Ошибка при загрузке данных в ClickHouse: {e}")

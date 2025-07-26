@@ -209,3 +209,4 @@ __marimo__/
 .idea
 /data/dags/secret.py
 /data/dags/test.py
+/data/test.py

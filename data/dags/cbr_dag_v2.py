@@ -12,13 +12,9 @@ from airflow import DAG                              # объект DAG, клю�
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
 
+load_dotenv()
 
-load_dotenv()                    # подключение .env
-
-DATE = '01/01/2023'
-DATE_FORMAT = str(datetime.strptime(DATE, '%d/%m/%Y').strftime('%Y_%m_%d'))
-NAME = 'andy_cbr_dag'
-TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
+NAME = 'andy_cbr_dag_v2'
 
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
@@ -81,9 +77,11 @@ def upload_to_clickhouse(csv_file, table_name, client):
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
     dag_id=NAME,
-    schedule_interval='@daily',        # Как часто запускать, счит. CRON запись
-    start_date=days_ago(1),            # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
-    tags=["andy", "cbr"]  # Тэги на свое усмотрение
+    schedule_interval='@daily',                     # Как часто запускать, счит. CRON запись
+    start_date=datetime(2024,1,1),  # Начало загрузки
+    end_date=datetime(2024,1,5),    # Конец загрузки
+    max_active_runs=1,                              # Будет запускать только 1 DAG за раз
+    tags=["andy", "cbr"]                            # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных
@@ -92,7 +90,7 @@ task_extract = PythonOperator(
     python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
-    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', DATE, './extracted_data.xml'],
+    op_args=['http://www.cbr.ru/scripts/XML_daily.asp', '{{ macros.ds_format(ds, "%Y-%m-%d", "%d/%m/%Y") }}', './extracted_data.xml'],
     dag=dag,  # DAG к которому приклеплена задача
 )
 
@@ -104,7 +102,7 @@ task_transform = PythonOperator(
     op_kwargs={
         's_file': './extracted_data.xml',
         'csv_file': './transformed_data.csv',
-        'date': DATE},
+        'date': '{{ macros.ds_format(ds, "%Y-%m-%d", "%d/%m/%Y") }}'},
     dag=dag,
 )
 
@@ -112,7 +110,7 @@ task_transform = PythonOperator(
 task_upload = PythonOperator(
     task_id='upload_to_clickhouse',
     python_callable=upload_to_clickhouse,
-    op_args=['./transformed_data.csv', TABLE_NAME, CH_CLIENT],
+    op_args=['./transformed_data.csv', NAME, CH_CLIENT],
     dag=dag,
 )
 

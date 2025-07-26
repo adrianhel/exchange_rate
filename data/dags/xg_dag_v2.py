@@ -4,20 +4,19 @@ import csv                                           # для работы с CS
 from clickhouse_driver import Client                 # для подключения к ClickHouse
 from airflow import DAG                              # объект DAG, ключевой элемент Airflow
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
-from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
-from datetime import datetime
-from dotenv import load_dotenv           # для подключения .env
-import os                                # см.выше
+from airflow.utils.dates import days_ago             # для обработки дат
+from datetime import datetime                        # для работы с датой
+from dotenv import load_dotenv                       # для подключения .env
+import os                                            # см.выше
 
 
 load_dotenv()                             # подключение .env
 
 TOKEN = os.getenv('TOKEN')
-DATE = '2023-01-01'
-DATE_FORMAT = datetime.strptime(DATE, '%Y-%m-%d').strftime('%Y_%m_%d')
-NAME = 'andy_xg_dag'
-TABLE_NAME = f'{NAME}_{DATE_FORMAT}'
-URL = f'https://api.exchangerate.host/timeframe?access_key={TOKEN}&source=USD&start_date={DATE}&end_date={DATE}'
+CURRENCY = 'USD'
+NAME = 'andy_xg_dag_v2'
+URL = (f'https://api.exchangerate.host/timeframe?access_key={TOKEN}'
+       f'&source={CURRENCY}&start_date={{{{ ds }}}}&end_date={{{{ ds }}}}')
 
 # Настройка подключения к базе данных ClickHouse
 CH_CLIENT = Client(
@@ -67,9 +66,11 @@ def upload_to_clickhouse(csv_file, table_name, client):
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
     dag_id=NAME,
-    schedule_interval='@daily',      # Как часто запускать, счит. CRON запись
-    start_date=days_ago(1),          # Начало и конец загрузки (такая запись всегад будет ставить вчерашний день)
-    tags=["andy", "xg"] # Тэги на свое усмотрение
+    schedule_interval='@daily',                     # Как часто запускать, счит. CRON запись
+    start_date=datetime(2024,1,1),  # Начало загрузки
+    end_date=datetime(2024,1,10),   # Конец загрузки
+    max_active_runs=1,                              # Будет запускать только 1 DAG за раз
+    tags=["andy", "xg"]                             # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных
@@ -87,7 +88,7 @@ task_extract = PythonOperator(
 task_upload = PythonOperator(
     task_id='upload_to_clickhouse',
     python_callable=upload_to_clickhouse,
-    op_args=['./extracted_data.csv', TABLE_NAME, CH_CLIENT],
+    op_args=['./extracted_data.csv', NAME, CH_CLIENT],
     dag=dag,
 )
 

@@ -1,7 +1,7 @@
 # Работа с API Центрального банка РФ
 Извлечения данных с **API** _ЦРБ РФ_ и загрузкой в **Clickhouse**. 
 
-### [Назад в Содержание ⤶](https://github.com/exchange_rate/README.md)
+### [Назад в Содержание ⤶](https://github.com/adrianhel/exchange_rate)
 
 ## Скрипт
 - [Script](scripts/cbr_script.py)

@@ -1,8 +1,16 @@
+# Работа с API Exchange Rate
+Извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**. 
 
+### [Назад в Содержание ⤶](https://github.com/exchange_rate)
 
+## Скрипт
+- [Script](scripts/xg_script.py)
 
+## DAG ver.1
+- [DAG](dags/xg_dag.py)
 
-- [Script](data/scripts/xg_script.py)
-для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  
-- [DAG](data/dags/xg_dag.py)
-для извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**.  .  
+## DAG ver.2
+- [DAG](dags/xg_dag_v2.py)
+
+## DAG ver.3
+- [DAG](dags/xg_dag_v3.py)

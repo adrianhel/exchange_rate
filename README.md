@@ -14,5 +14,5 @@ ___
 - [exchangerate API](https://exchangerate.host/documentation) – _документация по работе с API Exchange Rate._
 
 ## Содержание
-- [Работа с Центральным банком](/data/cbr.md)
-- [Работа с сервисом Exchange Rate](/data/xg.md)
+#### [Работа с Центральным банком](/data/cbr.md)
+#### [Работа с сервисом Exchange Rate](/data/xg.md)

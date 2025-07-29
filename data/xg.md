@@ -1,7 +1,7 @@
 # Работа с API Exchange Rate
 Извлечения данных с **API** _Exchange Rate_ и загрузкой в **Clickhouse**. 
 
-### [Назад в Содержание ⤶](https://github.com/exchange_rate)
+### [Назад в Содержание ⤶](https://github.com/exchange_rate/README.md)
 
 ## Скрипт
 - [Script](scripts/xg_script.py)

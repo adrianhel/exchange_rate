@@ -5,18 +5,18 @@ from clickhouse_driver import Client                 # для подключен
 from airflow import DAG                              # объект DAG, ключевой элемент Airflow
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
 from airflow.utils.dates import days_ago             # модуль, связанный с обработкой дат
-from datetime import datetime
-from airflow.hooks.base_hook import BaseHook
-from airflow.models import Variable
+from datetime import datetime                        # для даты
+from airflow.hooks.base_hook import BaseHook         # для хуков
+from airflow.models import Variable                  # для глобальных переменных
 
-NAME = "andy_xg_dag_v3"
-TOKEN = Variable.get('TOKEN')
-CURRENCY = 'USD'
-NAME = 'andy_xg_dag_v3'
+NAME = "andy_xg_dag_v3"           # Имя для DAG и таблицы в ClickHouse
+TOKEN = Variable.get('TOKEN')     # Токен для API тянем из Variables
+CURRENCY = 'USD'                  # Валюта, которая нас интересует
 URL = (f'https://api.exchangerate.host/timeframe?access_key={TOKEN}'
-       f'&source={CURRENCY}&start_date={{{{ ds }}}}&end_date={{{{ ds }}}}')
+       f'&source={CURRENCY}&start_date={{{{ ds }}}}&end_date={{{{ ds }}}}')  # Составной URL нашего API
 
 # Настройка подключения к базе данных ClickHouse
+# хукаем параметры из Connections
 HOST = BaseHook.get_connection("clickhouse_default").host
 USER = BaseHook.get_connection("clickhouse_default").login
 PASSWORD = BaseHook.get_connection("clickhouse_default").password
@@ -69,17 +69,17 @@ def upload_to_clickhouse(csv_file, table_name, client):
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
     dag_id=NAME,
-    schedule_interval='@daily',                     # Как часто запускать, счит. CRON запись
-    start_date=datetime(2025,4,1),  # Начало загрузки
-    end_date=datetime(2025,4,12),   # Конец загрузки
-    max_active_runs=1,                              # Будет запускать только 1 DAG за раз
-    tags=["andy", "xg"]                             # Тэги на свое усмотрение
+    schedule_interval='@daily',                        # Как часто запускать, счит. CRON запись
+    start_date=datetime(2025,4,1),    # Начало загрузки
+    end_date=datetime(2025,4,12),     # Конец загрузки
+    max_active_runs=1,                                 # Будет запускать только 1 DAG за раз
+    tags=["andy", "xg"]                                # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных
 task_extract = PythonOperator(
-    task_id='extract_data',        # Уникальное имя задачи
-    python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
+    task_id='extract_data',            # Уникальное имя задачи
+    python_callable=extract_data,      # Функция, которая будет запущена (определена выше)
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
     op_args=[URL, './extracted_data.csv'],
@@ -95,5 +95,5 @@ task_upload = PythonOperator(
     dag=dag,
 )
 
-# Связываем задачи в соответствующих дагах. Посмотреть связь можно здесь
+# Связываем задачи
 task_extract >> task_upload

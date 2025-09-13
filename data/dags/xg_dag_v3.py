@@ -72,8 +72,8 @@ dag = DAG(
     schedule_interval='@daily',         # Как часто запускать, счит. CRON запись
     start_date=datetime(2025,4,1),      # Начало загрузки
     end_date=datetime(2025,4,12),       # Конец загрузки
-    max_active_runs=1,              # Будет запускать только 1 DAG за раз
-    tags=["andy", "xg"]         # Тэги на свое усмотрение
+    max_active_runs=1,                  # Будет запускать только 1 DAG за раз
+    tags=["andy", "xg"]                 # Тэги на свое усмотрение
 )
 
 # Задача для извлечения данных

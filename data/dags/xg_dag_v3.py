@@ -57,7 +57,7 @@ def upload_to_clickhouse(csv_file, table_name, client):
     # Чтение данных из CSV
     data_frame = pd.read_csv(csv_file)
     # Преобразование в float
-    data_frame['value'] = data_frame['value'].astype(float)  # Преобразование в float
+    data_frame['value'] = data_frame['value'].astype(float)     # Преобразование в float
 
     # Создание таблицы, ЕСЛИ НЕ СУЩЕСТВУЕТ ТО СОЗДАТЬ ТАБЛИЦУ
     client.execute(
@@ -83,7 +83,7 @@ task_extract = PythonOperator(
 
     # Параметры в виде списка которые будут переданы в функцию "extract_data"
     op_args=[URL, './extracted_data.csv'],
-    dag=dag,  # DAG к которому приклеплена задача
+    dag=dag,    # DAG к которому приклеплена задача
 )
 
 

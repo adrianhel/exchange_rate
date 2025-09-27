@@ -68,23 +68,40 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Функция для обработки ошибки и отправки сообщения
 def task_failure_callback(context):
+    task_instance = context.get('task_instance')
+    dag = context.get('dag')
+    ds = context.get('ds')
+    error = context.get('exception')
+
+    task_id = task_instance.task_id
+    dag_id = dag.dag_id if dag else 'unknown'
+
+    # Формируем сообщение
+    text = f"❌ Ошибка {error}!\nDAG: {dag_id}\nЗадача: {task_id}\nДата: {ds}"
     send_message = TelegramOperator(
         task_id='send_message_telegram',
         telegram_conn_id='telegram_andy',
         chat_id='-1003046951828',
-        text='❌ Задача «' + context.get('task_instance').task_id + '» не выполнена.',
-        dag=dag)
+        text=text)
     return send_message.execute(context=context)
 
 
 # Функция для обработки ошибки и отправки сообщения
 def task_success_callback(context):
+    task_instance = context.get('task_instance')
+    dag = context.get('dag')
+    ds = context.get('ds')
+
+    task_id = task_instance.task_id
+    dag_id = dag.dag_id if dag else 'unknown'
+
+    # Формируем сообщение
+    text = f"✅ Завершено!\nDAG: {dag_id}\nЗадача: {task_id}\nДата: {ds}"
     send_message = TelegramOperator(
         task_id='send_message_telegram',
         telegram_conn_id='telegram_andy',
         chat_id='-1003046951828',
-        text='✅ Задача «' + context.get('task_instance').task_id + '» выполнена.',
-        dag=dag)
+        text=text)
     return send_message.execute(context=context)
 
 
@@ -107,7 +124,7 @@ dag = DAG(
 # Задача для извлечения данных
 task_extract = PythonOperator(
     task_id='extract_data',  # Уникальное имя задачи
-    python_callable=extract_data,  # Функция, которая будет запущена
+    python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
     # Параметры в виде списка, которые будут переданы в функцию "extract_data"
     op_args=[URL, './extracted_data.csv'],
     dag=dag,  # DAG к которому приклеплена задача
@@ -116,7 +133,7 @@ task_extract = PythonOperator(
 # Оператор для выполнения запроса
 create_table = ClickHouseOperator(
     task_id='create_table',
-    sql='CREATE TABLE IF NOT EXISTS andy_xg_notify (start_date String, source String, char_code String, value Float64) ENGINE Log',
+    sql=f'CREATE TABLE IF NOT EXISTS {NAME} (start_date String, source String, char_code String, value Float64) ENGINE Log',
     clickhouse_conn_id='clickhouse_default',
     dag=dag,
 )

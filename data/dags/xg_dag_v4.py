@@ -9,7 +9,9 @@ from datetime import datetime                        # для даты
 from airflow.hooks.base_hook import BaseHook         # для хуков
 from airflow.models import Variable                  # для глобальных переменных
 
-NAME = "andy_xg_dag_v3"           # Имя для DAG и таблицы в ClickHouse
+from data.ch_operator import create_table
+
+NAME = "andy_xg_v4"               # Имя для DAG и таблицы в ClickHouse
 TOKEN = Variable.get('TOKEN')     # Токен для API тянем из Variables
 CURRENCY = 'USD'                  # Валюта, которая нас интересует
 URL = (f'https://api.exchangerate.host/timeframe?access_key={TOKEN}'
@@ -59,10 +61,6 @@ def upload_to_clickhouse(csv_file, table_name, client):
     # Преобразование в float
     data_frame['value'] = data_frame['value'].astype(float)     # Преобразование в float
 
-    # Создание таблицы, ЕСЛИ НЕ СУЩЕСТВУЕТ ТО СОЗДАТЬ ТАБЛИЦУ
-    client.execute(
-        f'CREATE TABLE IF NOT EXISTS {table_name} (start_date String, source String, char_code String, value Float64) ENGINE = Log')
-
     # Запись data frame в ClickHouse
     client.execute(f'INSERT INTO {table_name} VALUES', [tuple(x) for x in data_frame.to_numpy()])
 
@@ -86,6 +84,13 @@ task_extract = PythonOperator(
     dag=dag,    # DAG к которому приклеплена задача
 )
 
+# Оператор для выполнения запроса
+create_table = ClickHouseOperator(
+    task_id='create_table',
+    sql='CREATE TABLE IF NOT EXISTS andy_xg_v4 (num_code Int64, char_code String, nominal Int64, name String, value String, date String) ENGINE Log',
+    clickhouse_conn_id='clickhouse_default',
+    dag=dag,
+)
 
 # Задачи для загрузки данных
 task_upload = PythonOperator(
@@ -96,4 +101,4 @@ task_upload = PythonOperator(
 )
 
 # Связываем задачи
-task_extract >> task_upload
+task_extract >> create_table >> task_upload

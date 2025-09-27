@@ -80,8 +80,8 @@ def upload_to_clickhouse(csv_file, table_name, client):
 dag = DAG(
     dag_id=NAME,
     schedule_interval='@daily',
-    start_date=datetime(2024, 1, 1),
-    end_date=datetime(2024, 1, 5),
+    start_date=datetime(2025, 9, 21),
+    end_date=datetime(2025, 9, 25),
     max_active_runs=1,
     tags=["andy", "cbr"]
 )

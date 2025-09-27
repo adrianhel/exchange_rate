@@ -8,6 +8,7 @@ from airflow.utils.dates import days_ago             # модуль, связа�
 from datetime import datetime                        # для даты
 from airflow.hooks.base_hook import BaseHook         # для хуков
 from airflow.models import Variable                  # для глобальных переменных
+from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator
 
 from data.ch_operator import create_table
 

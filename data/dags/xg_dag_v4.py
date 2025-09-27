@@ -4,12 +4,15 @@ import csv  # для работы с CSV
 from clickhouse_driver import Client  # для подключения к ClickHouse
 from airflow import DAG  # объект DAG, ключевой элемент Airflow
 from airflow.operators.python import PythonOperator  # с помощью которого него будем запускать Python код
-from airflow.utils.dates import days_ago  # модуль, связанный с обработкой дат
+from airflow.utils.dates import days_ago    # модуль, связанный с обработкой дат
 from datetime import datetime  # для даты
 from airflow.hooks.base_hook import BaseHook  # для хуков
 from airflow.models import Variable  # для глобальных переменных
-from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator
-from airflow.providers.telegram.operators.telegram import TelegramOperator
+from airflow.exceptions import AirflowException # для исключений
+from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator   # для работы с Clickhouse
+from airflow.providers.telegram.operators.telegram import TelegramOperator  # для работы с Telegram
+
+
 
 NAME = "andy_xg_notify"  # Имя для DAG и таблицы в ClickHouse
 TOKEN = Variable.get('TOKEN')  # Токен для API тянем из Variables

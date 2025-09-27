@@ -13,8 +13,10 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 
-# Настройка подключения к базе данных ClickHouse
 
+NAME = 'andy_cbr_dag_v3'
+
+# Настройка подключения к базе данных ClickHouse
 HOST = BaseHook.get_connection("clickhouse_default").host
 USER = BaseHook.get_connection("clickhouse_default").login
 PASSWORD = BaseHook.get_connection("clickhouse_default").password
@@ -80,14 +82,12 @@ def upload_to_clickhouse(csv_file, table_name, client):
 
 # Определяем DAG, это контейнер для описания нашего пайплайна
 dag = DAG(
-    '0_Examples_4_4_1_ETL_3',
+    dag_id=NAME,
     schedule_interval='@daily',
-
-    # Начало и конец загрузки 
     start_date=datetime(2024, 1, 1),
     end_date=datetime(2024, 1, 5),
     max_active_runs=1,
-    tags=['examples']
+    tags=["andy", "cbr"]
 )
 
 # Задача для извлечения данных 
@@ -116,7 +116,7 @@ task_transform = PythonOperator(
 task_upload = PythonOperator(
     task_id='upload_to_clickhouse',
     python_callable=upload_to_clickhouse,
-    op_args=['./transformed_data.csv', 'currency_data', CH_CLIENT],
+    op_args=['./transformed_data.csv', NAME, CH_CLIENT],
     dag=dag,
 )
 

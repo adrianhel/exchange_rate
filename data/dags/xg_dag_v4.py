@@ -10,7 +10,6 @@ from airflow.hooks.base_hook import BaseHook         # для хуков
 from airflow.models import Variable                  # для глобальных переменных
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator
 
-from data.ch_operator import create_table
 
 NAME = "andy_xg_v4"               # Имя для DAG и таблицы в ClickHouse
 TOKEN = Variable.get('TOKEN')     # Токен для API тянем из Variables
@@ -69,7 +68,7 @@ def upload_to_clickhouse(csv_file, table_name, client):
 dag = DAG(
     dag_id=NAME,
     schedule_interval='@daily',         # Как часто запускать, счит. CRON запись
-    start_date=datetime(2025,9,21),      # Начало загрузки
+    start_date=datetime(2025,9,21),     # Начало загрузки
     end_date=datetime(2025,9,25),       # Конец загрузки
     max_active_runs=1,                  # Будет запускать только 1 DAG за раз
     tags=["andy", "xg"]                 # Тэги на свое усмотрение
@@ -88,7 +87,7 @@ task_extract = PythonOperator(
 # Оператор для выполнения запроса
 create_table = ClickHouseOperator(
     task_id='create_table',
-    sql='CREATE TABLE IF NOT EXISTS andy_xg_v4 (num_code Int64, char_code String, nominal Int64, name String, value String, date String) ENGINE Log',
+    sql='CREATE TABLE IF NOT EXISTS andy_xg_v4 (start_date String, source String, char_code String, value Float64) ENGINE Log',
     clickhouse_conn_id='clickhouse_default',
     dag=dag,
 )

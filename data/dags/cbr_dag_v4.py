@@ -111,7 +111,7 @@ task_transform = PythonOperator(
 # Оператор для выполнения запроса
 create_table = ClickHouseOperator(
     task_id='create_table',
-    sql='CREATE TABLE IF NOT EXISTS currency_data (num_code Int64, char_code String, nominal Int64, name String, value String, date String) ENGINE Log',
+    sql='CREATE TABLE IF NOT EXISTS andy_cbr_dag_v4 (num_code Int64, char_code String, nominal Int64, name String, value String, date String) ENGINE Log',
     clickhouse_conn_id='clickhouse_default',
     dag=dag,
 )

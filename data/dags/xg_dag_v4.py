@@ -107,8 +107,8 @@ dag = DAG(
 # Задача для извлечения данных
 task_extract = PythonOperator(
     task_id='extract_data',  # Уникальное имя задачи
-    python_callable=extract_data,  # Функция, которая будет запущена (определена выше)
-    # Параметры в виде списка которые будут переданы в функцию "extract_data"
+    python_callable=extract_data,  # Функция, которая будет запущена
+    # Параметры в виде списка, которые будут переданы в функцию "extract_data"
     op_args=[URL, './extracted_data.csv'],
     dag=dag,  # DAG к которому приклеплена задача
 )

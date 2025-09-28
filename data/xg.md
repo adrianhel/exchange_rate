@@ -8,7 +8,7 @@
 - [Script](scripts/xg_script.py)
 
 ### DAG ver.1
-Используем ранеее написанный скрипт для написания DAG для Airflow.
+Используем ранее написанный скрипт для написания DAG в Airflow.
 - [DAG v1](dags/xg_dag.py)
 
 ### DAG ver.2
